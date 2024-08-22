@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "noprep-manager"
+version = "0.1.0"
+description = ""
+authors = ["Melqui Menezes <melqui.menezes.dev@gmail.com>"]
+readme = "README.md"
+packages = [{include = "noprep_manager"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.1"
+simple-settings = "^1.2.0"
+dj-database-url = "^2.2.0"
+python-dotenv = "^1.0.1"
+django-import-export = "^4.1.1"
+django-extensions = "^3.2.3"
+django-environ = "^0.11.2"
+django-cors-headers = "^4.4.0"
+psycopg = "^3.2.1"
+pydantic = "^2.8.2"
+django-stubs-ext = "^5.0.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
