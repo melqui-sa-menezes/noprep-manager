@@ -47,7 +47,7 @@ install-poetry:
 
 install: ## Install dependencies
 	@echo ${LIGHT_YELLOW}'Installing dependencies...'${NC}
-	@poetry install -v --all-extras --sync
+	@$(POETRY) install -v --all-extras --sync
 
 init: export POETRY_VIRTUALENVS_IN_PROJECT=true
 init: export POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON=true
@@ -55,8 +55,16 @@ init: ## Initialize the project
 	@$(MAKE) install-poetry
 	@$(MAKE) install
 	@$(POETRY) env info
+	@echo ${LIGHT_YELLOW}'Project initialized.'${NC}
+	@cmd cp .env.example .env
+	@echo ${LIGHT_YELLOW}'Please fill the .env file with the necessary environment variables.'${NC}
 
-runserver: start-db migrate ## Run Django Admin
+runserver: start-db migrate ## Start Database, apply migrations and run Django Admin
+	@echo ${LIGHT_YELLOW}'Running Django Admin...'${NC}
+	@export SIMPLE_SETTINGS=project.core.settings
+	@$(POETRY) run python src/manage.py runserver
+
+run: ## Run Django Admin
 	@echo ${LIGHT_YELLOW}'Running Django Admin...'${NC}
 	@export SIMPLE_SETTINGS=project.core.settings
 	@$(POETRY) run python src/manage.py runserver
@@ -64,10 +72,12 @@ runserver: start-db migrate ## Run Django Admin
 migrate: ## Run Django migrations
 	@echo ${LIGHT_YELLOW}'Running Django migrations...'${NC}
 	@$(POETRY) run python src/manage.py migrate
+	@$(MAKE) show-migrations
 
-migrations: start-db ## Create Django migrations
+migrations: ## Create Django migrations
 	@echo ${LIGHT_YELLOW}'Creating Django migrations...'${NC}
 	@$(POETRY) run python src/manage.py makemigrations
+	@$(MAKE) show-migrations
 
 migration-initial: ## Create initial Django migration. Example: make migration-initial app=drivers
 	@if [ $(app) ]; then
@@ -79,20 +89,22 @@ migration-initial: ## Create initial Django migration. Example: make migration-i
 
 show-migrations: ## Show Django migrations
 	@echo ${LIGHT_YELLOW}'Showing Django migrations...'${NC}
-	@$(POETRY) run python src/manage.py showmigrations
+	@$(POETRY) run python src/manage.py showmigrations drivers
 
 populate-db: export DJANGO_SUPERUSER_PASSWORD=admin
-populate-db: start-db ## Populate the database with initial data
-	@echo ${LIGHT_YELLOW}'Populating the database with initial data...'${NC}
+populate-db: ## Populate the database with initial data
+	@echo ${LIGHT_YELLOW}'Creating Django superuser...'${NC}
 	@$(POETRY) run python src/manage.py createsuperuser --username admin --email 'admin@econome.com.br' --noinput
+	@echo ${LIGHT_YELLOW}'Populating the database with initial data...'${NC}
+	@$(POETRY) run python src/manage.py syncdata initial_data.json --skip-remove
 
 start-db: ## Start the database
 	@echo ${LIGHT_YELLOW}'Starting the database...'${NC}
 	@docker compose up -d postgres
+	@$(MAKE) populate-db
 
-recreate-db: ## Recreate the database
-	@echo ${LIGHT_YELLOW}'Recreating the database...'${NC}
-	@docker compose down -v
+create-db: ## Create the database
+	@echo ${LIGHT_YELLOW}'Creating the database...'${NC}
 	@docker compose up -d postgres
 	@echo ${LIGHT_YELLOW}'Database recreated.'${NC}
 	@$(MAKE) migrations
@@ -101,6 +113,12 @@ recreate-db: ## Recreate the database
 	@echo ${LIGHT_YELLOW}'Migrations applied.'${NC}
 	@$(MAKE) populate-db
 	@echo ${LIGHT_YELLOW}'Database populated.'${NC}
+
+
+recreate-db: ## Recreate the database
+	@echo ${LIGHT_YELLOW}'Recreating the database...'${NC}
+	@docker compose down -v
+	@$(MAKE) create-db
 
 create-superuser: migrate ## Create Django superuser
 	@echo ${LIGHT_YELLOW}'Creating Django superuser...'${NC}

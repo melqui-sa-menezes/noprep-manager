@@ -82,13 +82,11 @@ ROOT_URLCONF = "urls"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-DATABASE_URL = os.getenv(
-    "DATABASE_URL", "postgres://postgres:postgres@127.0.0.1:5432/noprep-manager"
-)
+DATABASE_URL = os.getenv("DATABASE_URL", "postgres://postgres:postgres@127.0.0.1:5432/noprep-manager")
 DATABASE_READ_URL = os.getenv("DATABASE_READ_URL", DATABASE_URL)
-DATABASE_APPLICATION_NAME = f"{PROCESS_TYPE.upper()} {ENVIRONMENT.title()} {VERSION} - PID {os.getpid()} <{socket.gethostname()}>"[
-    :63
-]
+DATABASE_APPLICATION_NAME = (
+    f"{PROCESS_TYPE.upper()} {ENVIRONMENT.title()} {VERSION} - PID {os.getpid()} <{socket.gethostname()}>"[:63]
+)
 
 DATABASES = {
     "default": dj_database_url.parse(
@@ -112,9 +110,7 @@ DATABASE_ROUTERS = ["core.routers.DatabaseRouter"]
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -124,13 +120,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'pt-br'
-TIME_ZONE = 'America/Sao_Paulo'
+LANGUAGE_CODE = "pt-br"
+TIME_ZONE = "America/Sao_Paulo"
 
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-
 
 
 # Static files (CSS, JavaScript, Images)

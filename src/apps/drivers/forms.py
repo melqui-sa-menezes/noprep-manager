@@ -1,7 +1,7 @@
+import datetime
+
 from django import forms
 from django.contrib.auth.models import User
-from django.db.models import DateField
-from django.forms import DateInput
 
 from apps.drivers.enums import CategoryEnum, FederationEnum
 from django.utils.translation import gettext_lazy as _
@@ -11,6 +11,7 @@ from apps.drivers.models import Driver
 __all__ = ["DriverAdminForm"]
 
 from common.helpers.enums.cities_states import BrazilStatesEnum
+from common.helpers.utils.hash import hash_data
 
 
 class DriverAdminForm(forms.ModelForm):
@@ -26,24 +27,24 @@ class DriverAdminForm(forms.ModelForm):
         required=True,
         help_text=_("Nome de usuário para acesso ao sistema. Ex: joao.silva"),
     )
-    first_name = forms.CharField(
-        label=_("Nome"),
-        max_length=30,
-        required=True,
-        help_text=_("Nome do piloto")
+    nickname = forms.CharField(
+        label=_("Apelido"),
+        max_length=32,
+        required=False,
+        help_text=_("Apelido do piloto. Quando informado, aparece entre o nome e o sobrenome."),
     )
+    first_name = forms.CharField(label=_("Nome"), max_length=30, required=True, help_text=_("Nome do piloto"))
     last_name = forms.CharField(
         label=_("Sobrenome"),
         max_length=150,
         required=True,
         help_text=_("Sobrenome do piloto"),
     )
-    # TODO: investigar porque nao apresenta a data salva no admin
     born_date = forms.DateField(
         label=_("Data de nascimento"),
         required=True,
         show_hidden_initial=True,
-        widget=forms.DateInput(attrs={"type": "date", "format": "%Y-%m-%d"}),
+        widget=forms.DateInput(attrs={"type": "date"}),
         help_text=_("Data de nascimento do piloto"),
     )
     city = forms.CharField(
@@ -62,14 +63,15 @@ class DriverAdminForm(forms.ModelForm):
     email = forms.EmailField(
         label=_("E-mail"),
         max_length=254,
-        widget=forms.EmailInput(attrs={'placeholder': 'email@example.com'}),
-        required=True
+        widget=forms.EmailInput(attrs={"placeholder": "email@example.com"}),
+        required=True,
     )
     tax_id = forms.CharField(
         label=_("CPF"),
-        max_length=11,
+        max_length=14,
         required=True,
-        help_text=_("Documento de indentificação (CPF)"),
+        widget=forms.TextInput(attrs={"placeholder": "000.000.000-00"}),
+        help_text=_("Documento de indentificação (CPF)."),
     )
     license_number = forms.CharField(
         label=_("CNH"),
@@ -107,20 +109,45 @@ class DriverAdminForm(forms.ModelForm):
             self.fields["last_name"].initial = user.last_name
             self.fields["state"].initial = BrazilStatesEnum.get(key=instance.state).state_name
             self.fields["email"].initial = user.email
+            this_year = datetime.date.today().year
+            self.fields["born_date"].widget = forms.SelectDateWidget(
+                attrs={"type": "date"}, years=range(this_year - 60, this_year - 13)
+            )
+            self.fields["tax_id"].initial = instance.masked_tax_id
+            self.fields["tax_id"].widget.attrs["readonly"] = True
 
+    def save(self, commit=True, data_user_changed=False):
+        try:
+            if not self.cleaned_data.get("user"):
+                new_user = User.objects.create_user(
+                    username=self.data["user_name"],
+                    first_name=self.data["first_name"],
+                    last_name=self.data["last_name"],
+                    email=self.data["email"],
+                )
+                new_user.save()
+                self.instance.user = new_user
 
-    def save(self, commit=True):
-        new_user = User.objects.create_user(
-            username=self.data["user_name"],
-            first_name=self.data["first_name"],
-            last_name=self.data["last_name"],
-            email=self.data["email"]
-        )
-        new_user.save()
-        self.instance.user = new_user
-        return super().save(commit=commit)
+            for field in self.changed_data:
+                if field in ["user_name", "first_name", "last_name", "email"]:
+                    data_user_changed = True
+                    self.instance.user.__setattr__(field, self.cleaned_data[field])
+
+                if field == "tax_id":
+                    tax_id = str(self.cleaned_data[field]).replace(".", "").replace("-", "")
+                    self.instance.hashed_tax_id = hash_data(tax_id)
+                    self.instance.masked_tax_id = f"{tax_id[:3]}.***.***-{tax_id[-2:]}"
+
+            if data_user_changed:
+                self.instance.user.save()
+
+        except Exception as error:
+            self.add_error(None, error)
+            commit = False
+
+        finally:
+            return super().save(commit)
 
     class Meta:
         fields = "__all__"
         model = Driver
-

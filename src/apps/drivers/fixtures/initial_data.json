@@ -1,0 +1,35 @@
+[
+    {
+        "model": "auth.user",
+        "pk": 2,
+        "fields": {
+            "is_superuser": false,
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2021-07-01T00:00:00Z",
+            "email": "don.toretto@fastfurious.com",
+            "first_name": "Dominic",
+            "last_name": "Toretto",
+            "username": "don.toretto"
+        }
+    },
+    {
+        "model": "drivers.driver",
+        "pk": "dd6c0216-6b2b-4131-a2f6-527f22086c30",
+        "fields": {
+            "user_id": 2,
+            "nickname": "Don",
+            "born_date": "1990-01-01",
+            "city": "Aracaju",
+            "state": "SE",
+            "masked_tax_id": "010.***.***-09",
+            "hashed_tax_id": "dfeac13191c04f281fc116d21822b765d5096da86e372da1a1b2dee1d804e398",
+            "license_number": "029712276",
+            "cba_number": "49194",
+            "category": "PAR-B - Piloto de Arrancada",
+            "federation": "FSA",
+            "created_at": "2021-07-01T00:00:00Z",
+            "updated_at": "2021-07-01T00:00:00Z"
+        }
+    }
+]

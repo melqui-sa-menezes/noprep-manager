@@ -11,9 +11,7 @@ class BaseSchema(BaseModel):
     Reference: https://pydantic-docs.helpmanual.io/usage/model_config/
     """
 
-    model_config = ConfigDict(
-        populate_by_name=True, use_attribute_docstrings=True, extra="ignore"
-    )
+    model_config = ConfigDict(populate_by_name=True, use_attribute_docstrings=True, extra="ignore")
 
     def get(self, item: Any, default: Any = None) -> Any:
         return self.__getitem__(item, default)

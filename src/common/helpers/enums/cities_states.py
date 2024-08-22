@@ -6,7 +6,7 @@ __all__ = ["BrazilStatesEnum"]
 
 
 class BrazilStatesEnum(BaseEnum):
-    AA = ("--", "--", None)    # Default value
+    AA = ("--", "--", None)  # Default value
     AC = ("Acre", "AC", "https://static.mundoeducacao.uol.com.br/mundoeducacao/2021/01/bandeira-do-estado-do-acre.jpg")
     AL = ("Alagoas", "AL", None)
     AP = ("Amapá", "AP", None)
@@ -35,7 +35,7 @@ class BrazilStatesEnum(BaseEnum):
     SE = (
         "Sergipe",
         "SE",
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Bandeira_de_Sergipe.svg/800px-Bandeira_de_Sergipe.svg.png"
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Bandeira_de_Sergipe.svg/800px-Bandeira_de_Sergipe.svg.png",
     )
     TO = ("Tocantins", "TO", None)
 

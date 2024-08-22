@@ -21,6 +21,38 @@ pydantic = "^2.8.2"
 django-stubs-ext = "^5.0.4"
 
 
+[tool.poetry.group.test.dependencies]
+pytest = "^8.3.2"
+
+
+[tool.poetry.group.lint.dependencies]
+black = "^24.8.0"
+ruff = "^0.6.2"
+
+[tool.black]
+line-length = 120
+target-version = ['py38', 'py311', 'py312']
+force-exclude = '\.json$|migrations/'
+include = '\.py$'
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+exclude = [
+    "**/migrations/*",
+    "**/fixtures/*",
+    "**/admin.py",
+]
+
+[tool.pytest.ini_options]
+python_files = "test_*.py"
+asyncio_mode = "auto"
+env = [
+    "ENVIRONMENT=development",
+    "DJANGO_SETTINGS_MODULE=core.settings.test",
+    "SIMPLE_SETTINGS=core.settings.development",
+]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

@@ -18,11 +18,7 @@ def setup_settings():
 
         load_dotenv()
 
-        _settings = (
-            os.getenv("SIMPLE_SETTINGS")
-            or os.getenv("DJANGO_SETTINGS_MODULE")
-            or "core.settings.development"
-        )
+        _settings = os.getenv("SIMPLE_SETTINGS") or os.getenv("DJANGO_SETTINGS_MODULE") or "core.settings.development"
 
     os.environ.setdefault("SIMPLE_SETTINGS", _settings)
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", _settings)

@@ -3,6 +3,7 @@ from common.helpers.enums import BaseEnum
 
 __all__ = ["CategoryEnum", "FederationEnum"]
 
+
 class CategoryEnum(BaseEnum):
     _DEFAULT = "--"
     PAR_A = "PAR-A - Piloto de Arrancada"
@@ -10,7 +11,6 @@ class CategoryEnum(BaseEnum):
     PARDJ = "PARDJ - Piloto de Arrancada Drag Junior"
     PPNE_AR = "PPNE-AR - Piloto Portador de Necessidades Especiais - Arrancada"
     LPU_AR = "LPU-AR - Licença Prova Única - Arrancada"
-
 
 
 class FederationEnum(BaseEnum):
@@ -47,4 +47,3 @@ class FederationEnum(BaseEnum):
         obj.federation_symbol = federation_symbol
         obj.federation_name = federation_name
         return obj
-
