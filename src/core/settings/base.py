@@ -45,6 +45,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "core",
     "apps.drivers",
+    "apps.events"
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS

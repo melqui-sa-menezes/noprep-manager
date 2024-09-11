@@ -52,11 +52,11 @@ install: ## Install dependencies
 init: export POETRY_VIRTUALENVS_IN_PROJECT=true
 init: export POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON=true
 init: ## Initialize the project
+	@cp .env-example .env
 	@$(MAKE) install-poetry
 	@$(MAKE) install
 	@$(POETRY) env info
 	@echo ${LIGHT_YELLOW}'Project initialized.'${NC}
-	@cmd cp .env.example .env
 	@echo ${LIGHT_YELLOW}'Please fill the .env file with the necessary environment variables.'${NC}
 
 runserver: start-db migrate ## Start Database, apply migrations and run Django Admin
@@ -64,7 +64,7 @@ runserver: start-db migrate ## Start Database, apply migrations and run Django A
 	@export SIMPLE_SETTINGS=project.core.settings
 	@$(POETRY) run python src/manage.py runserver
 
-run: ## Run Django Admin
+run: start-db ## Run Django Admin
 	@echo ${LIGHT_YELLOW}'Running Django Admin...'${NC}
 	@export SIMPLE_SETTINGS=project.core.settings
 	@$(POETRY) run python src/manage.py runserver
@@ -89,7 +89,7 @@ migration-initial: ## Create initial Django migration. Example: make migration-i
 
 show-migrations: ## Show Django migrations
 	@echo ${LIGHT_YELLOW}'Showing Django migrations...'${NC}
-	@$(POETRY) run python src/manage.py showmigrations drivers
+	@$(POETRY) run python src/manage.py showmigrations drivers events
 
 populate-db: export DJANGO_SUPERUSER_PASSWORD=admin
 populate-db: ## Populate the database with initial data
@@ -101,11 +101,10 @@ populate-db: ## Populate the database with initial data
 start-db: ## Start the database
 	@echo ${LIGHT_YELLOW}'Starting the database...'${NC}
 	@docker compose up -d postgres
-	@$(MAKE) populate-db
 
 create-db: ## Create the database
 	@echo ${LIGHT_YELLOW}'Creating the database...'${NC}
-	@docker compose up -d postgres
+	@docker compose up -d
 	@echo ${LIGHT_YELLOW}'Database recreated.'${NC}
 	@$(MAKE) migrations
 	@echo ${LIGHT_YELLOW}'Migrations created.'${NC}
