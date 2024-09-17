@@ -1,153 +1,95 @@
-import datetime
-
 from django import forms
-from django.contrib.auth.models import User
-
-from apps.drivers.enums import CategoryEnum, FederationEnum
 from django.utils.translation import gettext_lazy as _
-
-from apps.drivers.models import Driver
-
-__all__ = ["DriverAdminForm"]
-
-from common.helpers.enums.cities_states import BrazilStatesEnum
-from common.helpers.utils.hash import hash_data
+from apps.drivers.models import Driver, Vehicle, RaceHistory, LapTime
+from apps.events.models import Event
+from apps.users_profiles.models import UserProfile
+from apps.drivers.enums import CategoryEnum, FederationEnum
 
 
-class DriverAdminForm(forms.ModelForm):
+class DriverForm(forms.ModelForm):
     user = forms.ModelChoiceField(
+        queryset=UserProfile.objects.all(),
         label=_("Usuário"),
-        queryset=User.objects.all(),
-        required=False,
         help_text=_("Usuário associado ao piloto"),
     )
-    user_name = forms.CharField(
-        label=_("Nome de usuário"),
-        max_length=150,
-        required=True,
-        help_text=_("Nome de usuário para acesso ao sistema. Ex: joao.silva"),
-    )
-    nickname = forms.CharField(
-        label=_("Apelido"),
-        max_length=32,
-        required=False,
-        help_text=_("Apelido do piloto. Quando informado, aparece entre o nome e o sobrenome."),
-    )
-    first_name = forms.CharField(label=_("Nome"), max_length=30, required=True, help_text=_("Nome do piloto"))
-    last_name = forms.CharField(
-        label=_("Sobrenome"),
-        max_length=150,
-        required=True,
-        help_text=_("Sobrenome do piloto"),
-    )
-    born_date = forms.DateField(
-        label=_("Data de nascimento"),
-        required=True,
-        show_hidden_initial=True,
-        widget=forms.DateInput(attrs={"type": "date"}),
-        help_text=_("Data de nascimento do piloto"),
-    )
-    city = forms.CharField(
-        label=_("Cidade"),
-        max_length=30,
-        required=True,
-        help_text=_("Cidade onde reside"),
-    )
-    state = forms.ChoiceField(
-        label=_("Estado"),
-        choices=sorted(BrazilStatesEnum.get_database_choices(by_name=True)),
-        widget=forms.Select,
-        required=True,
-        help_text=_("Estado onde reside"),
-    )
-    email = forms.EmailField(
-        label=_("E-mail"),
-        max_length=254,
-        widget=forms.EmailInput(attrs={"placeholder": "email@example.com"}),
-        required=True,
-    )
-    tax_id = forms.CharField(
-        label=_("CPF"),
-        max_length=14,
-        required=True,
-        widget=forms.TextInput(attrs={"placeholder": "000.000.000-00"}),
-        help_text=_("Documento de indentificação (CPF)."),
-    )
+    nickname = forms.CharField(max_length=32, required=False, label=_("Apelido"), help_text=_("Apelido do piloto"))
     license_number = forms.CharField(
-        label=_("CNH"),
-        max_length=50,
+        max_length=9,
         required=False,
+        label=_("Número da carteira de habilitação"),
         help_text=_("Número da carteira de habilitação"),
     )
-    cba_number = forms.CharField(
-        label=_("Número CBA"),
-        max_length=12,
-        required=False,
-        help_text=_("Número de registro CBA"),
-    )
     category = forms.ChoiceField(
-        label=_("Categoria"),
-        choices=sorted(CategoryEnum.get_database_choices()),
-        required=False,
+        choices=CategoryEnum.get_database_choices(),
+        label=_("Categoria da licença"),
         help_text=_("Categoria da licença"),
     )
+    cba_number = forms.CharField(
+        max_length=12, required=False, label=_("Número de registro CBA"), help_text=_("Número de registro CBA")
+    )
     federation = forms.ChoiceField(
+        choices=FederationEnum.get_database_choices(),
         label=_("Federação"),
-        choices=sorted(FederationEnum.get_database_choices()),
-        required=False,
         help_text=_("Federação de origem do piloto"),
     )
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        instance = kwargs.get("instance")
+    class Meta:
+        model = Driver
+        fields = ["user", "nickname", "license_number", "category", "cba_number", "federation"]
 
-        if instance:
-            user = instance.user
-            self.fields["user_name"].initial = user.username
-            self.fields["first_name"].initial = user.first_name
-            self.fields["last_name"].initial = user.last_name
-            self.fields["state"].initial = BrazilStatesEnum.get(key=instance.state).state_name
-            self.fields["email"].initial = user.email
-            this_year = datetime.date.today().year
-            self.fields["born_date"].widget = forms.SelectDateWidget(
-                attrs={"type": "date"}, years=range(this_year - 60, this_year - 13)
-            )
-            self.fields["tax_id"].initial = instance.masked_tax_id
-            self.fields["tax_id"].widget.attrs["readonly"] = True
 
-    def save(self, commit=True, data_user_changed=False):
-        try:
-            if not self.cleaned_data.get("user"):
-                new_user = User.objects.create_user(
-                    username=self.data["user_name"],
-                    first_name=self.data["first_name"],
-                    last_name=self.data["last_name"],
-                    email=self.data["email"],
-                )
-                new_user.save()
-                self.instance.user = new_user
-
-            for field in self.changed_data:
-                if field in ["user_name", "first_name", "last_name", "email"]:
-                    data_user_changed = True
-                    self.instance.user.__setattr__(field, self.cleaned_data[field])
-
-                if field == "tax_id":
-                    tax_id = str(self.cleaned_data[field]).replace(".", "").replace("-", "")
-                    self.instance.hashed_tax_id = hash_data(tax_id)
-                    self.instance.masked_tax_id = f"{tax_id[:3]}.***.***-{tax_id[-2:]}"
-
-            if data_user_changed:
-                self.instance.user.save()
-
-        except Exception as error:
-            self.add_error(None, error)
-            commit = False
-
-        finally:
-            return super().save(commit)
+# Form para o modelo Vehicle
+class VehicleForm(forms.ModelForm):
+    driver = forms.ModelChoiceField(
+        queryset=Driver.objects.all(), label=_("Piloto"), help_text=_("Piloto relacionado ao veículo")
+    )
+    brand = forms.CharField(max_length=30, label=_("Marca"), help_text=_("Marca do veículo"))
+    model = forms.CharField(max_length=30, label=_("Modelo"), help_text=_("Modelo do veículo"))
+    manufacture_year = forms.IntegerField(label=_("Ano de Fabricação"), help_text=_("Ano de Fabricação do veículo"))
+    plate_number = forms.CharField(max_length=8, label=_("Placa"), help_text=_("Placa de identificação do veículo"))
+    insured = forms.BooleanField(required=False, label=_("Seguro"), help_text=_("Se o veículo possui seguro (Sim/Não)"))
 
     class Meta:
-        fields = "__all__"
-        model = Driver
+        model = Vehicle
+        fields = [
+            "driver",
+            "brand",
+            "model",
+            "manufacture_year",
+            "plate_number",
+            "insured",
+        ]
+
+
+# Form para o modelo RaceHistory
+class RaceHistoryForm(forms.ModelForm):
+    driver = forms.ModelChoiceField(
+        queryset=Driver.objects.all(), label=_("Piloto"), help_text=_("Piloto relacionado ao histórico")
+    )
+    event = forms.ModelChoiceField(
+        queryset=Event.objects.all(), label=_("Evento"), help_text=_("Evento relacionado ao histórico")
+    )
+    position = forms.IntegerField(label=_("Posição"), help_text=_("Posição alcançada na corrida"))
+
+    class Meta:
+        model = RaceHistory
+        fields = ["driver", "event", "position"]
+
+
+# Form para o modelo LapTime
+class LapTimeForm(forms.ModelForm):
+    lap_number = forms.IntegerField(label=_("Número da volta"), help_text=_("Número da volta"))
+    time = forms.DurationField(label=_("Tempo da volta"), help_text=_("Tempo da volta"))
+    is_qualifying = forms.BooleanField(
+        required=False, label=_("Classificação"), help_text=_("Se a volta é de classificação (Sim/Não)")
+    )
+    is_valid = forms.BooleanField(required=False, label=_("Volta Válida"), help_text=_("Se a volta é válida (Sim/Não)"))
+    race_history = forms.ModelChoiceField(
+        queryset=RaceHistory.objects.all(),
+        label=_("Histórico de Corrida"),
+        help_text=_("Histórico de corrida ao qual essa volta pertence"),
+    )
+
+    class Meta:
+        model = LapTime
+        fields = ["lap_number", "time", "is_qualifying", "is_valid", "race_history"]

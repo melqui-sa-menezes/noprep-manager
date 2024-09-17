@@ -72,6 +72,7 @@ run: start-db ## Run Django Admin
 migrate: ## Run Django migrations
 	@echo ${LIGHT_YELLOW}'Running Django migrations...'${NC}
 	@$(POETRY) run python src/manage.py migrate
+	@$(MAKE) erd
 	@$(MAKE) show-migrations
 
 migrations: ## Create Django migrations
@@ -89,7 +90,7 @@ migration-initial: ## Create initial Django migration. Example: make migration-i
 
 show-migrations: ## Show Django migrations
 	@echo ${LIGHT_YELLOW}'Showing Django migrations...'${NC}
-	@$(POETRY) run python src/manage.py showmigrations drivers events
+	@$(POETRY) run python src/manage.py showmigrations drivers events users_profiles
 
 populate-db: export DJANGO_SUPERUSER_PASSWORD=admin
 populate-db: ## Populate the database with initial data
@@ -141,3 +142,7 @@ lint-fix: ## Fix linters
 	@$(POETRY) run ruff check src --fix
 	@$(MAKE) lint
 
+
+erd: ## Generate ERD
+	@echo ${LIGHT_YELLOW}'Generating ERD...'${NC}
+	@$(POETRY) run python src/manage.py graph_models -a -I UserProfile,Driver,Vehicle,RaceHistory,LapTime,EventType,Event -o erd.png

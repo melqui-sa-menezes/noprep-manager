@@ -4,7 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["Melqui Menezes <melqui.menezes.dev@gmail.com>"]
 readme = "README.md"
-packages = [{include = "noprep_manager"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -19,6 +18,8 @@ django-cors-headers = "^4.4.0"
 psycopg = "^3.2.1"
 pydantic = "^2.8.2"
 django-stubs-ext = "^5.0.4"
+pydot = "^3.0.1"
+pydotplus = "^2.0.2"
 
 
 [tool.poetry.group.test.dependencies]
@@ -42,6 +43,11 @@ exclude = [
     "**/migrations/*",
     "**/fixtures/*",
     "**/admin.py",
+]
+select = [
+    "Q000",  # Garante o uso de aspas duplas
+    "E",     # Erros de estilo (PEP8) para espaçamento correto
+    "F",     # Erros de código (como variáveis indefinidas)
 ]
 
 [tool.pytest.ini_options]

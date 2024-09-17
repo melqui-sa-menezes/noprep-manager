@@ -1,55 +1,37 @@
 from django.contrib import admin
-from django.utils.html import format_html
-from django.utils.translation import gettext_lazy as _
-
-from common.helpers.enums.cities_states import BrazilStatesEnum
-from .enums import CategoryEnum
-from .forms import DriverAdminForm
-from .models import Driver
+from apps.drivers.models import Driver, Vehicle, RaceHistory, LapTime
+from apps.drivers.forms import DriverForm, VehicleForm, RaceHistoryForm, LapTimeForm
 
 
-@admin.register(Driver)
 class DriverAdmin(admin.ModelAdmin):
-    form = DriverAdminForm
-    list_display = ("driver_name", "city", "state_flag", "category_symbol", "cba_number")
-    list_filter = ("state", "category", "federation")
-    readonly_fields = (
-        "created_at",
-        "updated_at",
-    )
-    fieldsets = (
-        (
-            _("Informações Pessoais"),
-            {
-                "fields": (
-                    "user_name",
-                    "first_name",
-                    "last_name",
-                    "nickname",
-                    "born_date",
-                    "tax_id",
-                    "city",
-                    "state",
-                    "email",
-                    "license_number",
-                )
-            },
-        ),
-        (_("Dados da CBA (Não obrigatório)"), {"fields": ("cba_number", "category", "federation")}),
-        (None, {"fields": ("created_at", "updated_at")}),
-    )
+    form = DriverForm
+    list_display = ("user", "nickname", "license_number", "category", "cba_number", "federation")
+    search_fields = ("user__user__username", "nickname", "license_number", "cba_number")
+    list_filter = ("category", "federation")
 
-    @admin.display(description=_("Estado"))
-    def state_flag(self, obj: Driver) -> str:
-        state = BrazilStatesEnum.get(key=obj.state)
-        if not state:
-            return obj.user_full_name
-        return format_html('<img src="{}" width="16" height="auto"> {}', state.flag, state.state_symbol)
 
-    @admin.display(description=_("Categoria"))
-    def category_symbol(self, obj: Driver) -> str:
-        return CategoryEnum(obj.category).name.replace("_", "-")
+class VehicleAdmin(admin.ModelAdmin):
+    form = VehicleForm
+    list_display = ("brand", "model", "manufacture_year", "plate_number", "driver")
+    search_fields = ("driver__user__user__username", "plate_number", "chassis_number")
+    list_filter = ("brand", "model", "manufacture_year", "insured")
 
-    @admin.display(description=_("Piloto"))
-    def driver_name(self, obj: Driver) -> str:
-        return obj.user_full_name
+
+class RaceHistoryAdmin(admin.ModelAdmin):
+    form = RaceHistoryForm
+    list_display = ("driver", "event", "position")
+    search_fields = ("driver__user__user__username", "event__name")
+    list_filter = ("event",)
+
+
+class LapTimeAdmin(admin.ModelAdmin):
+    form = LapTimeForm
+    list_display = ("race_history", "lap_number", "time", "is_qualifying", "is_valid")
+    search_fields = ("race_history__driver__user__user__username", "lap_number")
+    list_filter = ("is_qualifying", "is_valid")
+
+
+admin.site.register(Driver, DriverAdmin)
+admin.site.register(Vehicle, VehicleAdmin)
+admin.site.register(RaceHistory, RaceHistoryAdmin)
+admin.site.register(LapTime, LapTimeAdmin)

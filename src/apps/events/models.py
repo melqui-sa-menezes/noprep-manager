@@ -1,18 +1,24 @@
-from tkinter.font import names
-
 from django.db import models
 from common.django_framework import BaseModel
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 
 
+__all__ = ["EventType", "Event"]
+
 
 class EventType(BaseModel):
-    name = models.CharField(max_length=30, help_text=_("Nome do tipo de Evento"))
-    description = models.CharField(max_length=200, blank=True, null=True, help_text=_("Descrição de Evento"))
+    name = models.CharField(max_length=30, help_text=_("Nome do tipo de Evento"), verbose_name=_("Nome"))
+    description = models.CharField(
+        max_length=200, blank=True, null=True, help_text=_("Descrição do tipo de Evento"), verbose_name=_("Descrição")
+    )
 
     def __str__(self) -> str:
         return f"{self.name}"
+
+    class Meta:
+        verbose_name = _("Tipo de Evento")
+        verbose_name_plural = _("Tipos de Eventos")
 
 
 class Event(BaseModel):
@@ -21,7 +27,18 @@ class Event(BaseModel):
     starts_at = models.TimeField(blank=True, null=True, help_text=_("Horário de Início do Evento"))
     ends_at = models.TimeField(blank=True, null=True, help_text=_("Horário de Término do Evento"))
     address = models.CharField(max_length=256, help_text=_("Endereço do Evento"))
-    fee = models.DecimalField(decimal_places=2, max_digits= 7, blank=True, null=True, help_text=_("Taxa de inscrição do Evento"))
+    fee = models.DecimalField(
+        decimal_places=2, max_digits=7, blank=True, null=True, help_text=_("Taxa de inscrição do Evento")
+    )
     organizer = models.ForeignKey(User, on_delete=models.CASCADE, max_length=100, help_text=_("Organizador do Evento"))
     event_type = models.ForeignKey(EventType, on_delete=models.CASCADE, help_text=_("Tipo de Evento"))
-    regulation = models.URLField(max_length=200, blank=True, null=True, help_text=_("Acesso ao link do regulamento do Evento"))
+    regulation = models.URLField(
+        max_length=200, blank=True, null=True, help_text=_("Acesso ao link do regulamento do Evento")
+    )
+
+    class Meta:
+        verbose_name = _("Evento")
+        verbose_name_plural = _("Eventos")
+
+    def __str__(self) -> str:
+        return f"{self.name}"

@@ -31,6 +31,7 @@ DEFAULT_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.contrib.humanize",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
@@ -44,8 +45,9 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "core",
-    "apps.drivers",
-    "apps.events"
+    "apps.drivers.apps.DriversConfig",
+    "apps.events.apps.EventsConfig",
+    "apps.users_profiles.apps.UsersProfilesConfig",
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS

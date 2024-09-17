@@ -1,6 +1,8 @@
 from django.db.models import Model, ForeignKey, SET_NULL
 from django.contrib.auth.models import User
 
+__all__ = ["AuditMixin"]
+
 
 class AuditMixin(Model):
     created_by = ForeignKey(
