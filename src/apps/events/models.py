@@ -23,16 +23,23 @@ class EventType(BaseModel):
 
 
 class Event(BaseModel):
-    name = models.CharField(max_length=100, help_text=_("Nome do evento"))
-    date = models.DateField(help_text=_("Data do Evento"))
+    name = models.CharField(max_length=100, help_text=_("Nome do evento"), verbose_name=_("Nome"))
+    date = models.DateField(help_text=_("Data do Evento"), verbose_name=_("Data"))
     starts_at = models.TimeField(blank=True, null=True, help_text=_("Horário de Início do Evento"))
     ends_at = models.TimeField(blank=True, null=True, help_text=_("Horário de Término do Evento"))
     address = models.CharField(max_length=256, help_text=_("Endereço do Evento"))
     fee = models.DecimalField(
-        decimal_places=2, max_digits=7, blank=True, null=True, help_text=_("Taxa de inscrição do Evento")
+        decimal_places=2,
+        max_digits=7,
+        blank=True,
+        null=True,
+        help_text=_("Taxa de inscrição do Evento"),
+        verbose_name=_("Taxa"),
     )
     organizer = models.ForeignKey(User, on_delete=models.CASCADE, max_length=100, help_text=_("Organizador do Evento"))
-    event_type = models.ForeignKey(EventType, on_delete=models.CASCADE, help_text=_("Tipo de Evento"))
+    event_type = models.ForeignKey(
+        EventType, on_delete=models.CASCADE, help_text=_("Tipo de Evento"), verbose_name=_("Tipo de Eventos")
+    )
     regulation = models.URLField(
         max_length=200, blank=True, null=True, help_text=_("Acesso ao link do regulamento do Evento")
     )
@@ -57,10 +64,12 @@ class Subscription(BaseModel):
         on_delete=models.CASCADE,
         related_name="subscriptions",
         help_text=_("Evento ao qual o piloto se inscreveu"),
+        verbose_name=_("Evento"),
     )
     subscription_date = models.DateTimeField(
         auto_now_add=True,
         help_text=_("Data e hora da inscrição"),
+        verbose_name=_("Data de inscrição"),
     )
     status = models.CharField(
         max_length=20,

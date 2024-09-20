@@ -11,22 +11,36 @@ __all__ = ["Driver", "Vehicle", "RaceHistory", "LapTime"]
 
 class Driver(BaseModel):
     user: UserProfile = models.OneToOneField(
-        UserProfile, on_delete=models.CASCADE, related_name="driver", help_text=_("Usuário associado ao piloto")
+        UserProfile,
+        on_delete=models.CASCADE,
+        related_name="driver",
+        help_text=_("Usuário associado ao piloto"),
+        verbose_name=_("Usuário"),
     )
-    nickname = models.CharField(max_length=32, blank=True, null=True, help_text=_("Apelido do piloto"))
+    nickname = models.CharField(
+        max_length=32, blank=True, null=True, help_text=_("Apelido do piloto"), verbose_name=_("Apelido")
+    )
     license_number = models.CharField(
-        max_length=9, blank=True, null=True, help_text=_("Número da carteira de habilitação")
+        max_length=9,
+        blank=True,
+        null=True,
+        help_text=_("Número da carteira de habilitação"),
+        verbose_name=_("Número da licença"),
     )
     category = models.CharField(
         max_length=CategoryEnum.get_max_length(),
         choices=CategoryEnum.get_database_choices(),
         help_text=_("Categoria da licença"),
+        verbose_name=_("Categoria"),
     )
-    cba_number = models.CharField(max_length=12, blank=True, null=True, help_text=_("Número de registro CBA"))
+    cba_number = models.CharField(
+        max_length=12, blank=True, null=True, help_text=_("Número de registro CBA"), verbose_name=_("Número CBA")
+    )
     federation = models.CharField(
         max_length=FederationEnum.get_max_length(),
         choices=FederationEnum.get_database_choices(),
         help_text=_("Federação de origem do piloto"),
+        verbose_name=_("Federação"),
     )
 
     @property
@@ -111,15 +125,20 @@ class RaceHistory(BaseModel):
 
 
 class LapTime(BaseModel):
-    lap_number = models.IntegerField(help_text=_("Número da volta"))
-    time = models.DurationField(help_text=_("Tempo da volta"))
-    is_qualifying = models.BooleanField(default=False, help_text=_("Se a volta é de classificação (Sim/Não)"))
-    is_valid = models.BooleanField(default=True, help_text=_("Se a volta é válida (Sim/Não)"))
+    lap_number = models.IntegerField(help_text=_("Número da volta"), verbose_name=_("Número de volta"))
+    time = models.DurationField(help_text=_("Tempo da volta"), verbose_name=_("Tempo"))
+    is_qualifying = models.BooleanField(
+        default=False, help_text=_("Se a volta é de classificação (Sim/Não)"), verbose_name=_("É qualificatória")
+    )
+    is_valid = models.BooleanField(
+        default=True, help_text=_("Se a volta é válida (Sim/Não)"), verbose_name=_("É valido")
+    )
     race_history = models.ForeignKey(
         RaceHistory,
         related_name="laps_time",
         on_delete=models.CASCADE,
         help_text=_("Histórico de corrida ao qual essa volta pertence"),
+        verbose_name=_("Histórico de corrida"),
     )
 
     class Meta:

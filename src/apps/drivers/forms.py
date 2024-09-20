@@ -1,3 +1,4 @@
+
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from apps.drivers.models import Driver, Vehicle, RaceHistory, LapTime
@@ -69,6 +70,10 @@ class RaceHistoryForm(forms.ModelForm):
         queryset=Event.objects.all(), label=_("Evento"), help_text=_("Evento relacionado ao histórico")
     )
     position = forms.IntegerField(label=_("Posição"), help_text=_("Posição alcançada na corrida"))
+    vehicle = forms.ModelChoiceField(
+        queryset=Vehicle.objects.all(),
+        label=_("Veículo"),
+    )
     laptimes = forms.CharField(
         widget=forms.TextInput(attrs={"readonly": "readonly"}),
         label=_("Voltas"),
