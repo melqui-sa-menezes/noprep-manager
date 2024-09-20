@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from apps.drivers.models import Driver, Vehicle, RaceHistory, LapTime
 from apps.events.models import Event
-from apps.users_profiles.models import UserProfile
+from apps.user_profiles.models import UserProfile
 from apps.drivers.enums import CategoryEnum, FederationEnum
 
 

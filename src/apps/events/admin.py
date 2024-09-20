@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import EventType, Event
+from .models import EventType, Event, Subscription
 
 
 @admin.register(EventType)
@@ -49,3 +49,6 @@ class EventAdmin(admin.ModelAdmin):
             return obj.ends_at
 
     ends_at.short_description = "Horário de Término"
+
+
+admin.site.register(Subscription)

@@ -1,0 +1,62 @@
+[
+   {
+      "model":"auth.user",
+      "pk":1,
+      "fields":{
+         "username":"johndoe",
+         "first_name":"John",
+         "last_name":"Doe",
+         "email":"john.doe@example.com",
+         "password":"pbkdf2_sha256$390000$K7ZT6fZ5CKewPFqNWWGCwK$VQTV0QrK8oJHLg2SESPWZXE3vECRbUuJ5OPnDmJqYmU=",
+         "is_staff":false,
+         "is_active":true,
+         "is_superuser":false
+      }
+   },
+   {
+      "model":"auth.user",
+      "pk":2,
+      "fields":{
+         "username":"janesmith",
+         "first_name":"Jane",
+         "last_name":"Smith",
+         "email":"jane.smith@example.com",
+         "password":"pbkdf2_sha256$390000$CFlxrSaEov0ZjB4f1nOKvb$WXcUp3YncYyTfI7PQ87rC1fN4xnbPy0YIDq8G1kU5JA=",
+         "is_staff":false,
+         "is_active":true,
+         "is_superuser":false
+      }
+   },
+   {
+      "model":"user_profiles.userprofile",
+      "pk":"8244a7a3-8560-442c-8d2a-93ff15c9dff4",
+      "fields":{
+         "user":1,
+         "phone_number":"11999999999",
+         "born_date":"1990-01-01",
+         "address":"Rua A, 123",
+         "city":"São Paulo",
+         "state":"SP",
+         "hashed_tax_id":"47647114150a4bb38a75aaa629b25bbf94177a595a525cb888f51c7352d11e88",
+         "masked_tax_id":"570.***.***-44",
+         "created_at":"2023-10-01T12:00:00Z",
+         "updated_at":"2023-10-01T12:00:00Z"
+      }
+   },
+   {
+      "model":"user_profiles.userprofile",
+      "pk":"23e89a49-f5f0-4e35-af1d-02a926889656",
+      "fields":{
+         "user":2,
+         "phone_number":"21988888888",
+         "born_date":"1992-05-15",
+         "address":"Rua B, 456",
+         "city":"Rio de Janeiro",
+         "state":"RJ",
+         "hashed_tax_id":"990f34b6c1d9c05bbeb718e5b74a8e0e8e5a80c7b83b94e7efed72eee2b1b60c",
+         "masked_tax_id":"065.***.***-74",
+         "created_at":"2023-10-01T12:00:00Z",
+         "updated_at":"2023-10-01T12:00:00Z"
+      }
+   }
+]

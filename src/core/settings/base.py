@@ -47,7 +47,7 @@ LOCAL_APPS = [
     "core",
     "apps.drivers.apps.DriversConfig",
     "apps.events.apps.EventsConfig",
-    "apps.users_profiles.apps.UsersProfilesConfig",
+    "apps.user_profiles.apps.UserProfilesConfig",
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS

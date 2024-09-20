@@ -1,0 +1,80 @@
+[
+   {
+      "model":"events.eventtype",
+      "pk":"6329872c-15d9-4982-a796-0526e27a65a0",
+      "fields":{
+         "name":"Arrancada",
+         "description":"Evento de corrida em linha reta",
+         "created_at":"2023-10-01T12:00:00Z",
+         "updated_at":"2023-10-01T12:00:00Z"
+      }
+   },
+   {
+      "model":"events.eventtype",
+      "pk":"3adf3ddd-5035-4fe1-a430-b2f195e02d0e",
+      "fields":{
+         "name":"Track Day",
+         "description":"Evento de volta rapida em circuito fechado",
+         "created_at":"2023-10-01T12:00:00Z",
+         "updated_at":"2023-10-01T12:00:00Z"
+      }
+   },
+   {
+      "model":"events.event",
+      "pk":"3d071a6b-4f68-4ba8-b53e-3dc5f73131dd",
+      "fields":{
+         "name":"Armagedon",
+         "date":"2024-11-15",
+         "starts_at":"09:00:00",
+         "ends_at":"17:00:00",
+         "address":"Autódromo de Interlagos",
+         "fee":"500.00",
+         "organizer":1,
+         "event_type":"6329872c-15d9-4982-a796-0526e27a65a0",
+         "regulation":"http://example.com/regulamento/armagedon2024.pdf",
+         "created_at":"2023-10-01T12:00:00Z",
+         "updated_at":"2023-10-01T12:00:00Z"
+      }
+   },
+   {
+      "model":"events.event",
+      "pk":2,
+      "fields":{
+         "name":"Desafio Drift Rio",
+         "date":"2024-12-10",
+         "starts_at":"10:00:00",
+         "ends_at":"18:00:00",
+         "address":"Kartódromo Internacional RJ",
+         "fee":"300.00",
+         "organizer":1,
+         "event_type":"3adf3ddd-5035-4fe1-a430-b2f195e02d0e",
+         "regulation":"http://example.com/regulamento/track-day.pdf",
+         "created_at":"2023-10-01T12:00:00Z",
+         "updated_at":"2023-10-01T12:00:00Z"
+      }
+   },
+   {
+      "model":"events.subscription",
+      "pk":"a7e7dc7f-26ab-4c8c-9569-12c8f4415c37",
+      "fields":{
+         "driver":"0bd6f90d-bbd5-47b9-a373-0bd00ef0f5f7",
+         "event":"3d071a6b-4f68-4ba8-b53e-3dc5f73131dd",
+         "subscription_date":"2024-10-01T12:00:00Z",
+         "status":"confirmed",
+         "created_at":"2023-10-01T12:00:00Z",
+         "updated_at":"2023-10-01T12:00:00Z"
+      }
+   },
+   {
+      "model":"events.subscription",
+      "pk":"f538c16b-43e4-4528-a766-18e18cd5b69b",
+      "fields":{
+         "driver":"3684a55a-dbb2-40ff-a23a-ea243faffbf3",
+         "event":"3d071a6b-4f68-4ba8-b53e-3dc5f73131dd",
+         "subscription_date":"2024-11-01T15:30:00Z",
+         "status":"confirmed",
+         "created_at":"2023-10-01T12:00:00Z",
+         "updated_at":"2023-10-01T12:00:00Z"
+      }
+   }
+]

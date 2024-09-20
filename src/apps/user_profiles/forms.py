@@ -4,7 +4,7 @@ from django import forms
 
 from django.utils.translation import gettext_lazy as _
 
-from apps.users_profiles.models import UserProfile
+from apps.user_profiles.models import UserProfile
 from common.helpers.enums.cities_states import BrazilStatesEnum
 from common.helpers.utils.hash import hash_data
 

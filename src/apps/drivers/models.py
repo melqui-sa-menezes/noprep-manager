@@ -2,8 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from apps.drivers.enums import CategoryEnum, FederationEnum
-from apps.events.models import Event
-from apps.users_profiles.models import UserProfile
+from apps.user_profiles.models import UserProfile
 from common.django_framework import BaseModel
 from common.helpers.enums.cities_states import BrazilStatesEnum
 
@@ -88,7 +87,10 @@ class Vehicle(BaseModel):
 class RaceHistory(BaseModel):
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, help_text=_("Piloto relacionado ao histórico"))
     event = models.ForeignKey(
-        Event, on_delete=models.CASCADE, related_name=_("race_history"), help_text=_("Evento relacionado ao histórico")
+        "events.Event",
+        on_delete=models.CASCADE,
+        related_name=_("race_history"),
+        help_text=_("Evento relacionado ao histórico"),
     )
     position = models.IntegerField(help_text=_("Posição alcançada na corrida"))
 

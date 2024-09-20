@@ -1,10 +1,11 @@
 from django.db import models
+
 from common.django_framework import BaseModel
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 
 
-__all__ = ["EventType", "Event"]
+__all__ = ["EventType", "Event", "Subscription"]
 
 
 class EventType(BaseModel):
@@ -42,3 +43,41 @@ class Event(BaseModel):
 
     def __str__(self) -> str:
         return f"{self.name}"
+
+
+class Subscription(BaseModel):
+    driver = models.ForeignKey(
+        "drivers.Driver",
+        on_delete=models.CASCADE,
+        related_name="subscriptions",
+        help_text=_("Piloto inscrito no evento"),
+    )
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name="subscriptions",
+        help_text=_("Evento ao qual o piloto se inscreveu"),
+    )
+    subscription_date = models.DateTimeField(
+        auto_now_add=True,
+        help_text=_("Data e hora da inscrição"),
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("pending", _("Pendente")),
+            ("confirmed", _("Confirmada")),
+            ("canceled", _("Cancelada")),
+        ],
+        default="pending",
+        help_text=_("Status da inscrição"),
+    )
+
+    class Meta:
+        verbose_name = _("Inscrição")
+        verbose_name_plural = _("Inscrições")
+        unique_together = ("driver", "event")
+        ordering = ["-subscription_date"]
+
+    def __str__(self):
+        return f"{self.driver} - {self.event.name}"
