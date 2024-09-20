@@ -38,7 +38,6 @@ class DriverForm(forms.ModelForm):
         fields = ["user", "nickname", "license_number", "category", "cba_number", "federation"]
 
 
-# Form para o modelo Vehicle
 class VehicleForm(forms.ModelForm):
     driver = forms.ModelChoiceField(
         queryset=Driver.objects.all(), label=_("Piloto"), help_text=_("Piloto relacionado ao veículo")
@@ -70,10 +69,30 @@ class RaceHistoryForm(forms.ModelForm):
         queryset=Event.objects.all(), label=_("Evento"), help_text=_("Evento relacionado ao histórico")
     )
     position = forms.IntegerField(label=_("Posição"), help_text=_("Posição alcançada na corrida"))
+    laptimes = forms.CharField(
+        widget=forms.TextInput(attrs={"readonly": "readonly"}),
+        label=_("Voltas"),
+        required=False,
+        help_text=_("Voltas realizadas pelo piloto na corrida"),
+    )
 
     class Meta:
         model = RaceHistory
-        fields = ["driver", "event", "position"]
+        fields = ["driver", "event", "position", "laptimes"]
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        instance = kwargs.get("instance")
+
+        if instance:
+            self.fields["driver"].widget.attrs["readonly"] = True
+            self.fields["event"].widget.attrs["readonly"] = True
+            self.fields["position"].widget.attrs["readonly"] = True
+            self.fields["laptimes"] = forms.ModelMultipleChoiceField(
+                queryset=LapTime.objects.filter(race_history=instance.id).all(),
+                required=False,
+            )
+            self.fields["laptimes"].widget.attrs["readonly"] = True
 
 
 # Form para o modelo LapTime

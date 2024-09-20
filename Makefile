@@ -134,7 +134,7 @@ lint-fix: ## Fix linters
 
 erd: ## Generate ERD
 	@echo ${LIGHT_YELLOW}'Generating ERD...'${NC}
-	@$(POETRY) run python $(SRC_DIR)/manage.py graph_models -a -o erd.png
+	@$(POETRY) run python $(SRC_DIR)/manage.py graph_models -a -I UserProfile,Driver,Vehicle,RaceHistory,LapTime,EventType,Event,Subscription -o erd.png
 
 test: ## Run tests
 	@echo ${LIGHT_YELLOW}'Running tests...'${NC}

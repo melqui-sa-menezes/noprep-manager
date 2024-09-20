@@ -44,7 +44,7 @@ exclude = [
     "**/fixtures/*",
     "**/admin.py",
 ]
-select = [
+lint.select = [
     "Q000",  # Garante o uso de aspas duplas
     "E",     # Erros de estilo (PEP8) para espaçamento correto
     "F",     # Erros de código (como variáveis indefinidas)

@@ -6,6 +6,8 @@ from apps.user_profiles.models import UserProfile
 from common.django_framework import BaseModel
 from common.helpers.enums.cities_states import BrazilStatesEnum
 
+__all__ = ["Driver", "Vehicle", "RaceHistory", "LapTime"]
+
 
 class Driver(BaseModel):
     user: UserProfile = models.OneToOneField(
@@ -59,7 +61,12 @@ class Driver(BaseModel):
 
 
 class Vehicle(BaseModel):
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, help_text=_("Piloto relacionado ao Veículo"))
+    driver = models.ForeignKey(
+        Driver,
+        on_delete=models.CASCADE,
+        help_text=_("Piloto relacionado ao Veículo"),
+        related_query_name="vehicle_driver",
+    )
     brand = models.CharField(max_length=30, help_text=_("Marca do veículo"))
     model = models.CharField(max_length=30, help_text=_("Modelo do veículo"))
     manufacture_year = models.IntegerField(help_text=_("Ano de Fabricação do veículo"))
@@ -92,6 +99,7 @@ class RaceHistory(BaseModel):
         related_name=_("race_history"),
         help_text=_("Evento relacionado ao histórico"),
     )
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_query_name="vehicle_driver")
     position = models.IntegerField(help_text=_("Posição alcançada na corrida"))
 
     def __str__(self) -> str:

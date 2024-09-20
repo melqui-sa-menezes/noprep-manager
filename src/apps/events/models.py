@@ -79,5 +79,5 @@ class Subscription(BaseModel):
         unique_together = ("driver", "event")
         ordering = ["-subscription_date"]
 
-    def __str__(self):
+    def __repr__(self) -> str:
         return f"{self.driver} - {self.event.name}"
